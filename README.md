@@ -1,224 +1,185 @@
 # Awesome x402 on Base 🚀
 
-> A curated collection of resources, tools, and knowledge about x402 protocol on Base chain, maintained by the Base Korea Developer Ambassador.
+> Base 체인에서 x402 프로토콜을 사용하기 위한 리소스, 도구, 지식 모음 - Base Korea Developer Ambassador가 관리합니다.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Base Chain](https://img.shields.io/badge/Chain-Base-blue.svg)](https://base.org)
 [![x402 Protocol](https://img.shields.io/badge/Protocol-x402-green.svg)](https://www.x402.org)
 
-## 📝 TL;DR
+## 📝 요약 (TL;DR)
 
-**What**: Korean documentation and guides for x402 payment protocol on Base chain
-**Why**: Official x402 examples already use Base - we add comprehensive Korean tutorials
-**How**: Git submodule links official code (`external/`) + Korean guides (`docs/korean/`)
-**For**: Korean developers & global builders interested in Base-specific x402 implementations
+**무엇**: Base 체인 x402 결제 프로토콜 한국어 가이드
+**왜**: 공식 예제가 이미 Base 사용 - 상세한 한글 튜토리얼 추가
+**어떻게**: Git 서브모듈로 공식 코드(`external/`) 연결 + 한글 가이드(`docs/korean/`)
+**대상**: 한국 개발자 & Base 특화 x402 구현에 관심있는 글로벌 빌더
 
-**Quick Start**: [English Docs](https://docs.cdp.coinbase.com/x402/welcome) | [한글 가이드](./docs/korean/README.ko.md)
+**빠른 시작**: [공식 문서](https://docs.cdp.coinbase.com/x402/welcome) | [한글 가이드](./docs/korean/README.ko.md)
 
 ---
 
-## 📖 About This Repository
+## 📖 이 레포지토리에 대하여
 
-This repository provides **Korean guides and documentation** for the x402 protocol on Base chain. Since the official x402 examples already use Base chain by default, we focus on creating comprehensive Korean tutorials and community resources.
+이 레포지토리는 Base 체인에서 **x402 프로토콜**을 사용하기 위한 **한국어 가이드와 문서**를 제공합니다. 공식 x402 예제는 이미 Base 체인을 기본으로 사용하므로, 각 예제에 대한 상세한 한글 튜토리얼과 커뮤니티 리소스 제공에 집중합니다.
 
-**What's Inside:**
-- 🔗 **Official Examples** (via Git submodule in `external/`) - Direct access to Coinbase's x402 examples
-- 📝 **Korean Guides** (in `docs/korean/`) - Step-by-step Korean tutorials for each example
-- 🔵 **Base-Specific Content** (in `examples/`) - Additional Base chain optimizations and use cases
-- 🇰🇷 **Korean Community** - Resources for Korean developers
+**포함 내용:**
+- 🔗 **공식 예제** (`external/`의 Git 서브모듈) - Coinbase의 x402 예제에 직접 접근
+- 📝 **한글 가이드** (`docs/korean/`) - 각 예제에 대한 단계별 한글 튜토리얼
+- 🔵 **Base 특화 콘텐츠** (`examples/`) - Base 체인 최적화 및 사용 사례
+- 🇰🇷 **한국 커뮤니티** - 한국 개발자를 위한 리소스
 
-> **Note**: This repository complements the [official x402 repository](https://github.com/coinbase/x402) by providing Korean documentation and Base-focused content.
+> **참고**: 이 레포지토리는 [공식 x402 레포지토리](https://github.com/coinbase/x402)를 보완하여 한국어 문서와 Base 중심 콘텐츠를 제공합니다.
 
-## 🔍 What is x402?
+## 🔍 x402란?
 
-**x402** is an open-source payment protocol developed by Coinbase that revolutionizes internet-native payments by reviving the HTTP 402 status code that has been dormant for 26 years.
+**x402**는 Coinbase가 개발한 오픈소스 결제 프로토콜로, 26년간 사용되지 않던 HTTP 402 상태 코드를 현대적으로 재해석하여 인터넷 네이티브 결제를 혁신합니다.
 
-### Key Features
+### 주요 특징
 
-- ⚡ **Lightning Fast** - Payments processed in ~2 seconds
-- 💰 **Ultra Low Cost** - Transaction fees < $0.0001, enabling micropayments as low as $0.001
-- 🤖 **Machine-to-Machine** - Enable AI agents and IoT devices to autonomously pay for resources
-- 🔗 **Chain Agnostic** - Supports Base, Solana, Polygon, Ethereum, and more
-- 🌐 **HTTP Native** - Built on top of HTTP for seamless web integration
+- ⚡ **빠른 속도** - 약 2초 내 결제 처리
+- 💰 **초저비용** - 거래 수수료 < $0.0001, 최소 $0.001 결제 가능
+- 🤖 **기계간 결제** - AI 에이전트와 IoT 기기의 자율적 리소스 결제
+- 🔗 **체인 독립적** - Base, Solana, Polygon, Ethereum 등 지원
+- 🌐 **HTTP 네이티브** - 웹 통합을 위해 HTTP 위에 구축
 
-### How It Works
+### 작동 원리
 
-x402 leverages the HTTP 402 "Payment Required" status code to create a standardized payment layer for the internet. When a service requires payment, it returns a 402 response with payment instructions. Clients (including AI agents) can automatically process these payments using stablecoins like USDC, without requiring accounts, sessions, or complex authentication.
+x402는 HTTP 402 "Payment Required" 상태 코드를 활용하여 인터넷을 위한 표준화된 결제 레이어를 만듭니다. 서비스가 결제를 요구하면 결제 지침이 포함된 402 응답을 반환합니다. 클라이언트(AI 에이전트 포함)는 계정, 세션, 복잡한 인증 없이 USDC와 같은 스테이블코인을 사용하여 자동으로 결제를 처리할 수 있습니다.
 
-## 🎯 Why Base Chain?
+## 🎯 왜 Base 체인인가?
 
-**Base** is the optimal network for x402 protocol adoption:
+**Base**는 x402 프로토콜 도입에 최적의 네트워크입니다:
 
-- 🚀 **High Performance** - Fast finality and low latency
-- 💵 **Minimal Fees** - Gas fees < $0.0001 for x402 transactions
-- 🔐 **Ethereum Security** - L2 built on Ethereum with robust security
-- 🌊 **Native Support** - x402 has first-class support for Base Sepolia and Base Mainnet
-- 💎 **USDC Integration** - Native USDC as the default payment currency
+- 🚀 **높은 성능** - 빠른 최종성과 낮은 지연시간
+- 💵 **최소 수수료** - x402 거래의 가스비 < $0.0001
+- 🔐 **이더리움 보안** - 이더리움 위에 구축된 L2의 강력한 보안
+- 🌊 **네이티브 지원** - Base Sepolia와 Base Mainnet에 대한 일급 지원
+- 💎 **USDC 통합** - 기본 결제 통화로 네이티브 USDC 사용
 
-Base provides the perfect infrastructure for x402's vision of enabling micropayments and machine-to-machine transactions at scale.
+Base는 x402의 마이크로페이먼트와 AI 에이전트 간 거래를 대규모로 가능하게 하는 완벽한 인프라를 제공합니다.
 
-## 🌟 x402 Ecosystem
+## 🌟 x402 생태계
 
-The x402 ecosystem is rapidly growing with support from major tech companies:
+x402 생태계는 주요 기술 기업들의 지원으로 빠르게 성장하고 있습니다:
 
-- **Coinbase** - Protocol creator and primary maintainer
-- **Cloudflare** - Co-founder of x402 Foundation
-- **Google** - Infrastructure integration
-- **Visa** - Payment network partnership
-- **AWS** - Cloud infrastructure support
-- **Circle** - USDC stablecoin provider
-- **Anthropic** - AI integration
+- **Coinbase** - 프로토콜 제작자 및 주요 관리자
+- **Cloudflare** - x402 Foundation 공동 설립자
+- **Google** - 인프라 통합
+- **Visa** - 결제 네트워크 파트너십
+- **AWS** - 클라우드 인프라 지원
+- **Circle** - USDC 스테이블코인 제공자
+- **Anthropic** - AI 통합
 
-### Recent Growth Metrics
 
-- 📈 **163,600+** transactions in the last 7 days (+701.7%)
-- 💰 **$140,200+** in transaction volume (+8,218.5%)
-- 👥 **31,000+** unique buyers (+15,000%)
-
-## 📁 Repository Structure
+## 📁 레포지토리 구조
 
 ```
 awesome-x402-on-base/
-├── external/x402/          # 🔗 Git Submodule (Official x402 Repository)
-│   └── examples/python/    # Official Python examples (read-only)
+├── external/x402/          # 🔗 Git 서브모듈 (공식 x402 레포지토리)
+│   └── examples/python/    # 공식 Python 예제 (읽기 전용)
 │
-├── examples/               # 📝 Base-Specific Examples (This Repo)
-│   └── base-specific/      # Base chain optimization examples
+├── examples/               # 📝 Base 특화 예제 (이 레포)
+│   └── base-specific/      # Base 체인 최적화 예제
 │
-├── docs/korean/            # 🇰🇷 Korean Documentation
-│   ├── quickstart/         # Quick start guides
-│   ├── examples/           # Korean guides for official examples
-│   └── base-chain/         # Base chain setup guides
+├── docs/korean/            # 🇰🇷 한국어 문서
+│   ├── quickstart/         # 빠른 시작 가이드
+│   ├── examples/           # 공식 예제 한글 가이드
+│   └── base-chain/         # Base 체인 설정 가이드
 │
-└── resources/              # 📚 Additional Resources
-    └── korean-community.md # Korean community links
+└── resources/              # 📚 추가 리소스
+    └── korean-community.md # 한국 커뮤니티 링크
 ```
 
-**Clear Separation:**
-- **`external/`** = Official x402 examples (via submodule, don't modify)
-- **`examples/`** = Our Base-specific additions and advanced use cases
-- **`docs/`** = Korean guides and tutorials for both
+**명확한 구분:**
+- **`external/`** = 공식 x402 예제 (서브모듈, 수정 금지)
+- **`examples/`** = x402 예제 사용 사례
+- **`docs/`** = 한글 가이드 및 튜토리얼
 
-## 🚀 Quick Start
+## 🚀 빠른 시작
 
-### For English Speakers
-→ Start with [Official x402 Documentation](https://docs.cdp.coinbase.com/x402/welcome)
+### 영어 사용자를 위해
+→ [공식 x402 문서](https://docs.cdp.coinbase.com/x402/welcome)에서 시작하세요
 
 ### 한국 개발자분들을 위해 🇰🇷
 → [한글 빠른 시작 가이드](./docs/korean/README.ko.md)에서 시작하세요
 
-## 💡 Examples with Korean Guides
+## 💡 예제 및 한글 가이드
 
-### Python Examples (Official Code + Korean Guides)
+### Python 예제 (공식 코드 + 한글 가이드)
 
-| Example | Official Code | Korean Guide |
-|---------|---------------|--------------|
-| **requests Client** | [→ Code](./external/x402/examples/python/clients/requests) | [→ 한글 가이드](./docs/korean/examples/python-requests-client.ko.md) |
-| **httpx Client** | [→ Code](./external/x402/examples/python/clients/httpx) | [→ 한글 가이드](./docs/korean/examples/python-httpx-client.ko.md) |
-| **FastAPI Server** | [→ Code](./external/x402/examples/python/servers) | [→ 한글 가이드](./docs/korean/examples/python-fastapi-server.ko.md) |
-| **Discovery** | [→ Code](./external/x402/examples/python/discovery) | [→ 한글 가이드](./docs/korean/examples/python-discovery.ko.md) |
+| 예제 | 공식 코드 | 한글 가이드 |
+|------|----------|------------|
+| **requests 클라이언트** | [→ 코드](./external/x402/examples/python/clients/requests) | [→ 한글 가이드](./docs/korean/examples/python-requests-client.ko.md) |
+| **httpx 클라이언트** | [→ 코드](./external/x402/examples/python/clients/httpx) | [→ 한글 가이드](./docs/korean/examples/python-httpx-client.ko.md) |
+| **FastAPI 서버** | [→ 코드](./external/x402/examples/python/servers) | [→ 한글 가이드](./docs/korean/examples/python-fastapi-server.ko.md) |
+| **Discovery** | [→ 코드](./external/x402/examples/python/discovery) | [→ 한글 가이드](./docs/korean/examples/python-discovery.ko.md) |
 
-### Using the Submodule
+### 서브모듈 사용하기
 
-First time setup:
+최초 설정:
 ```bash
-# Clone this repository with submodules
+# 서브모듈과 함께 이 레포지토리 클론
 git clone --recursive https://github.com/YOUR_USERNAME/awesome-x402-on-base.git
 
-# Or if already cloned without --recursive
+# 또는 이미 클론한 경우
 git submodule update --init --recursive
 ```
 
-Access official examples:
+공식 예제 접근:
 ```bash
 cd external/x402/examples/python
-# Follow the Korean guides in docs/korean/examples/
+# docs/korean/examples/의 한글 가이드를 따라하세요
 ```
 
-## 🗺️ Roadmap
+## 🗺️ 로드맵
 
-### ✅ Phase 1: Foundation (Current)
-- [x] Repository setup with Git submodule
-- [x] Directory structure
-- [ ] Korean README (README.ko.md)
-- [ ] Python quickstart guide (Korean)
-- [ ] Base Sepolia setup guide (Korean)
+프로젝트의 상세한 개발 계획은 [ROADMAP.md](./ROADMAP.md)를 참고하세요.
 
-### 🔄 Phase 2: Korean Documentation
-- [ ] requests client guide (Korean)
-- [ ] httpx client guide (Korean)
-- [ ] FastAPI server guide (Korean)
-- [ ] Discovery example guide (Korean)
-- [ ] USDC faucet guide (Korean)
+## 🤝 기여하기
 
-### 🚀 Phase 3: Advanced Content
-- [ ] AI agent integration tutorial
-- [ ] API monetization guide
-- [ ] Production deployment guide
-- [ ] Gas optimization techniques
+기여를 환영합니다! x402로 개발하거나, 문서를 작성하거나, 경험을 공유하고 싶다면 언제든 참여해주세요.
 
-### 🌏 Phase 4: Community
-- [ ] Korean Discord/Telegram
-- [ ] Video tutorials (Korean)
-- [ ] Workshop materials
-- [ ] Hackathon starter kits
+### 기여 방법
 
-## 🤝 Contributing
+- 🐛 버그나 이슈 리포트
+- 💡 새로운 기능이나 개선사항 제안
+- 📝 튜토리얼이나 가이드 작성
+- 🔧 코드 예제나 도구 제출
+- 🌐 문서 번역
+- 📢 x402 프로젝트 공유
 
-Contributions are welcome! Whether you're building with x402, writing documentation, or sharing your experiences, we'd love to have your input.
+이슈를 열거나 풀 리퀘스트를 자유롭게 제출해주세요.
 
-### Ways to Contribute
+## 📚 리소스
 
-- 🐛 Report bugs or issues
-- 💡 Suggest new features or improvements
-- 📝 Write tutorials or guides
-- 🔧 Submit code examples or tools
-- 🌐 Translate documentation
-- 📢 Share your x402 projects
+### 공식 x402 리소스
+- 📖 [공식 문서](https://docs.cdp.coinbase.com/x402/welcome)
+- 💻 [x402 GitHub 레포지토리](https://github.com/coinbase/x402)
+- 📄 [x402 백서](https://www.x402.org/x402-whitepaper.pdf)
+- 🌐 [x402 웹사이트](https://www.x402.org)
 
-Please feel free to open an issue or submit a pull request.
-
-## 📚 Resources
-
-### Official x402 Resources
-- 📖 [Official Documentation](https://docs.cdp.coinbase.com/x402/welcome)
-- 💻 [x402 GitHub Repository](https://github.com/coinbase/x402)
-- 📄 [x402 Whitepaper](https://www.x402.org/x402-whitepaper.pdf)
-- 🌐 [x402 Website](https://www.x402.org)
-
-### x402 SDK & Examples
-- [Python SDK](https://github.com/coinbase/x402/tree/main/python/x402) - Official Python implementation
-- [Python Examples](./external/x402/examples/python) - Client & server examples (via submodule)
+### x402 SDK & 예제
+- [Python SDK](https://github.com/coinbase/x402/tree/main/python/x402) - 공식 Python 구현
+- [Python 예제](./external/x402/examples/python) - 클라이언트 & 서버 예제 (서브모듈)
 - [TypeScript SDK](https://github.com/coinbase/x402/tree/main/typescript)
-- [Go Implementation](https://github.com/coinbase/x402/tree/main/go)
+- [Go 구현](https://github.com/coinbase/x402/tree/main/go)
 
-### Base Chain Resources
-- [Base Official Website](https://base.org)
-- [Base Documentation](https://docs.base.org)
+### Base 체인 리소스
+- [Base 공식 웹사이트](https://base.org)
+- [Base 문서](https://docs.base.org)
 - [Base Sepolia Faucet](https://faucet.quicknode.com/base/sepolia)
 - [Circle USDC Faucet](https://faucet.circle.com/)
 
-### Announcements & Articles
-- [Introducing x402 - Coinbase](https://www.coinbase.com/developer-platform/discover/launches/x402)
-- [Launching the x402 Foundation - Cloudflare](https://blog.cloudflare.com/x402/)
+## 📬 연락하기
 
-### Korean Community (한국 커뮤니티)
-- 🇰🇷 [한국어 가이드](./docs/korean/README.ko.md)
-- 📱 Discord/Telegram (Coming Soon)
-- 📝 [Korean Community Resources](./resources/korean-community.md)
+- **이슈 & 질문** - 이 레포지토리에 이슈 열기
+- **토론** - GitHub Discussions에서 의견 공유
 
-## 📬 Connect
+## 📄 라이선스
 
-- **Base Korea Developer Community** - [Join us](./resources/korean-community.md)
-- **Issues & Questions** - Open an issue in this repository
-- **Discussions** - Share your thoughts in GitHub Discussions
-
-## 📄 License
-
-This repository is licensed under the [MIT License](LICENSE).
+이 레포지토리는 [MIT License](LICENSE)에 따라 라이선스가 부여됩니다.
 
 ---
 
-**Maintained with ❤️ by Base Korea Developer Ambassador**
+**Base Korea Developer Ambassador가 정성을 담아 관리합니다**
 
-*Building the future of internet-native payments, one commit at a time.*
+*인터넷 네이티브 결제의 미래를 만들어갑니다, 한 커밋씩.*
