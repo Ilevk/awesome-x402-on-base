@@ -498,6 +498,6 @@ CDP Portal 또는 [Base Sepolia Explorer](https://sepolia.basescan.org/)에서 U
 
 ---
 
-**작성**: Base Korea Developer Ambassador Logan  
+**작성**: Logan (Base Korea Developer Ambassador)  
 **마지막 업데이트**: 2025년 11월 8일  
 **다음 검토 예정**: 2025년 12월  

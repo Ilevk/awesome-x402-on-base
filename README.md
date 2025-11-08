@@ -180,6 +180,6 @@ cd external/x402/examples/python
 
 ---
 
-**Base Korea Developer Ambassador가 정성을 담아 관리합니다**
+**Logan (Base Korea Developer Ambassador)가 정성을 담아 관리합니다**
 
 *인터넷 네이티브 결제의 미래를 만들어갑니다, 한 커밋씩.*
