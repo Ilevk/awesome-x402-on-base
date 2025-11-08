@@ -8,12 +8,12 @@
 
 ## 📝 요약 (TL;DR)
 
-**무엇**: Base 체인 x402 결제 프로토콜 한국어 가이드
-**왜**: 공식 예제가 이미 Base 사용 - 상세한 한글 튜토리얼 추가
-**어떻게**: Git 서브모듈로 공식 코드(`external/`) 연결 + 한글 가이드(`docs/korean/`)
-**대상**: 한국 개발자 & Base 특화 x402 구현에 관심있는 글로벌 빌더
+**What**: Base 체인 x402 결제 프로토콜 한국어 가이드  
+**Why**: 공식 예제가 이미 Base 사용 - 상세한 한글 튜토리얼 추가  
+**How**: Git 서브모듈로 공식 코드(`external/`) 연결 + 한글 가이드(`docs/korean/`)  
+**Target**: 한국 개발자 & Base 특화 x402 구현에 관심있는 글로벌 빌더  
 
-**빠른 시작**: [공식 문서](https://docs.cdp.coinbase.com/x402/welcome) | [한글 가이드](./docs/korean/README.ko.md)
+**Quick Start**: [Official Documentation](https://docs.cdp.coinbase.com/x402/welcome) | [Korean Guide](./docs/korean/README.ko.md)
 
 ---
 
