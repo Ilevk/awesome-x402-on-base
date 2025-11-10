@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 _db_instance: DonationDB | None = None
 
 
-@lru_cache()
+@lru_cache
 def get_settings() -> Settings:
     """
     Get application settings instance.
@@ -51,9 +51,7 @@ def get_db() -> DonationDB:
     global _db_instance
 
     if _db_instance is None:
-        raise RuntimeError(
-            "Database not initialized. Call init_db() during startup."
-        )
+        raise RuntimeError("Database not initialized. Call init_db() during startup.")
 
     return _db_instance
 

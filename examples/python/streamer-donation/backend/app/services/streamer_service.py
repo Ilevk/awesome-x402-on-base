@@ -6,7 +6,6 @@ retrieval, validation, and tier matching.
 """
 
 import logging
-from typing import Optional
 
 from app.core.database import DonationDB
 from app.models.dtos import DonationTier, Streamer
@@ -17,7 +16,7 @@ logger = logging.getLogger(__name__)
 class StreamerService:
     """Service for managing streamer-related business logic."""
 
-    def __init__(self, db: DonationDB):
+    def __init__(self, db: DonationDB) -> None:
         """
         Initialize streamer service with database instance.
 
@@ -26,7 +25,7 @@ class StreamerService:
         """
         self.db = db
 
-    def get_streamer_by_id(self, streamer_id: str) -> Optional[Streamer]:
+    def get_streamer_by_id(self, streamer_id: str) -> Streamer | None:
         """
         Retrieve streamer by unique ID.
 
@@ -38,7 +37,7 @@ class StreamerService:
         """
         return self.db.get_streamer(streamer_id)
 
-    def get_streamer_by_wallet(self, wallet_address: str) -> Optional[Streamer]:
+    def get_streamer_by_wallet(self, wallet_address: str) -> Streamer | None:
         """
         Retrieve streamer by wallet address.
 
@@ -68,7 +67,7 @@ class StreamerService:
 
     def find_matching_tier(
         self, streamer: Streamer, amount_usd: float, tolerance: float = 0.01
-    ) -> Optional[DonationTier]:
+    ) -> DonationTier | None:
         """
         Find donation tier that matches the given amount.
 
@@ -103,7 +102,7 @@ class StreamerService:
         )
         return None
 
-    def validate_streamer_active(self, streamer: Streamer) -> tuple[bool, Optional[str]]:
+    def validate_streamer_active(self, streamer: Streamer) -> tuple[bool, str | None]:
         """
         Validate that streamer is active and accepting donations.
 

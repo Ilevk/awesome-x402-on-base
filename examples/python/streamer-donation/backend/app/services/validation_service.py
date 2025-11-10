@@ -6,7 +6,6 @@ messages, and donation amounts to ensure data integrity and security.
 """
 
 import logging
-from typing import Optional
 
 import bleach
 from web3 import Web3
@@ -17,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ValidationService:
     """Service for validating and sanitizing user inputs."""
 
-    def __init__(self, min_donation_usd: float = 0.01, max_donation_usd: float = 1000.0):
+    def __init__(self, min_donation_usd: float = 0.01, max_donation_usd: float = 1000.0) -> None:
         """
         Initialize validation service with donation limits.
 
@@ -51,9 +50,7 @@ class ValidationService:
             logger.warning(f"Failed to validate address {address}: {e}")
             return False
 
-    def sanitize_message(
-        self, message: str | None, max_length: int = 200
-    ) -> Optional[str]:
+    def sanitize_message(self, message: str | None, max_length: int = 200) -> str | None:
         """
         Sanitize user message to prevent XSS attacks.
 
@@ -85,7 +82,7 @@ class ValidationService:
         # Return None if empty after cleaning
         return clean.strip() if clean.strip() else None
 
-    def validate_amount_range(self, amount_usd: float) -> tuple[bool, Optional[str]]:
+    def validate_amount_range(self, amount_usd: float) -> tuple[bool, str | None]:
         """
         Validate donation amount is within allowed range.
 
@@ -122,7 +119,7 @@ class ValidationService:
 
     def validate_donation_tier_match(
         self, amount_usd: float, tier_amounts: list[float], tolerance: float = 0.01
-    ) -> tuple[bool, Optional[int]]:
+    ) -> tuple[bool, int | None]:
         """
         Check if donation amount matches any tier amount.
 

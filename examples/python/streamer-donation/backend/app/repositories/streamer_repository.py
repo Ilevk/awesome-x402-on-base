@@ -5,7 +5,6 @@ Provides abstraction layer over database operations for streamers.
 """
 
 import logging
-from typing import Optional
 
 from app.core.database import DonationDB
 from app.models.dtos import Streamer
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 class StreamerRepository:
     """Repository for managing streamer data access."""
 
-    def __init__(self, db: DonationDB):
+    def __init__(self, db: DonationDB) -> None:
         """
         Initialize repository with database instance.
 
@@ -25,7 +24,7 @@ class StreamerRepository:
         """
         self.db = db
 
-    def get_by_id(self, streamer_id: str) -> Optional[Streamer]:
+    def get_by_id(self, streamer_id: str) -> Streamer | None:
         """
         Retrieve streamer by unique ID.
 
@@ -37,7 +36,7 @@ class StreamerRepository:
         """
         return self.db.get_streamer(streamer_id)
 
-    def get_by_wallet(self, wallet_address: str) -> Optional[Streamer]:
+    def get_by_wallet(self, wallet_address: str) -> Streamer | None:
         """
         Retrieve streamer by wallet address.
 

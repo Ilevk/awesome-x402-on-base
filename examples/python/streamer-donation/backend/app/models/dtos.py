@@ -5,9 +5,8 @@ These are lightweight dataclasses used for passing data between layers.
 Unlike Pydantic models, they don't include validation logic.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional
 
 
 class Platform(str, Enum):
@@ -44,10 +43,10 @@ class Streamer:
     id: str
     name: str
     wallet_address: str
-    platforms: List[Platform]
-    donation_tiers: List[DonationTier]
+    platforms: list[Platform]
+    donation_tiers: list[DonationTier]
     thank_you_message: str
-    avatar_url: Optional[str] = None
+    avatar_url: str | None = None
 
 
 @dataclass
@@ -64,5 +63,5 @@ class DonationMessage:
     donor_address: str
     tx_hash: str
     timestamp: int
-    message: Optional[str] = None
-    clip_url: Optional[str] = None
+    message: str | None = None
+    clip_url: str | None = None

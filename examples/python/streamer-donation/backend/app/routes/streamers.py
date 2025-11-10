@@ -5,10 +5,11 @@ This module provides endpoints for retrieving streamer information.
 Uses Dependency Injection for service layer access.
 """
 
+import dataclasses
 import logging
-from typing import Annotated, List
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.core.dependencies import get_streamer_service
 from app.models.schemas import ErrorResponseSchema, StreamerSchema
@@ -57,7 +58,9 @@ async def get_streamer(
             )
 
         logger.debug(f"Retrieved streamer: {streamer.name} ({streamer_id})")
-        return streamer
+
+        # Convert DTO to Pydantic schema
+        return StreamerSchema(**dataclasses.asdict(streamer))
 
     except HTTPException:
         raise
@@ -71,7 +74,7 @@ async def get_streamer(
 
 @router.get(
     "/streamers",
-    response_model=List[StreamerSchema],
+    response_model=list[StreamerSchema],
     responses={
         500: {"model": ErrorResponseSchema, "description": "Internal server error"},
     },
@@ -79,9 +82,9 @@ async def get_streamer(
     description="Retrieve a list of all registered streamers (limited to 100).",
 )
 async def list_streamers(
-    limit: int = 100,
     streamer_service: Annotated[StreamerService, Depends(get_streamer_service)],
-) -> List[StreamerSchema]:
+    limit: Annotated[int, Query(ge=1, le=1000)] = 100,
+) -> list[StreamerSchema]:
     """
     List all streamers.
 
@@ -99,7 +102,12 @@ async def list_streamers(
         streamers = streamer_service.list_streamers(limit=limit)
 
         logger.debug(f"Retrieved {len(streamers)} streamers")
-        return streamers
+
+        # Convert DTOs to Pydantic schemas
+        return [
+            StreamerSchema(**dataclasses.asdict(streamer))
+            for streamer in streamers
+        ]
 
     except Exception as e:
         logger.error(f"Failed to list streamers: {e}")
@@ -147,7 +155,9 @@ async def get_streamer_by_wallet(
             )
 
         logger.debug(f"Retrieved streamer by wallet: {streamer.name}")
-        return streamer
+
+        # Convert DTO to Pydantic schema
+        return StreamerSchema(**dataclasses.asdict(streamer))
 
     except HTTPException:
         raise

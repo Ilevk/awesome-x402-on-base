@@ -5,10 +5,11 @@ This module provides endpoints for creating and retrieving donations.
 Uses Dependency Injection for service layer access.
 """
 
+import dataclasses
 import logging
-from typing import Annotated, List
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.core.dependencies import get_donation_service, get_streamer_service
 from app.models.schemas import (
@@ -82,7 +83,7 @@ async def submit_donation_message(
 
 @router.get(
     "/donations/streamer/{streamer_id}",
-    response_model=List[DonationMessageSchema],
+    response_model=list[DonationMessageSchema],
     responses={
         404: {"model": ErrorResponseSchema, "description": "Streamer not found"},
         500: {"model": ErrorResponseSchema, "description": "Internal server error"},
@@ -92,10 +93,10 @@ async def submit_donation_message(
 )
 async def list_donations_for_streamer(
     streamer_id: str,
-    limit: int = 100,
     donation_service: Annotated[DonationService, Depends(get_donation_service)],
     streamer_service: Annotated[StreamerService, Depends(get_streamer_service)],
-) -> List[DonationMessageSchema]:
+    limit: Annotated[int, Query(ge=1, le=1000)] = 100,
+) -> list[DonationMessageSchema]:
     """
     List all donations for a streamer.
 
@@ -124,7 +125,12 @@ async def list_donations_for_streamer(
         donations = donation_service.list_donations_for_streamer(streamer_id, limit=limit)
 
         logger.debug(f"Retrieved {len(donations)} donations for streamer {streamer.name}")
-        return donations
+
+        # Convert DTOs to Pydantic schemas
+        return [
+            DonationMessageSchema(**dataclasses.asdict(donation))
+            for donation in donations
+        ]
 
     except HTTPException:
         raise
@@ -173,7 +179,9 @@ async def get_donation(
             )
 
         logger.debug(f"Retrieved donation: {donation_id}")
-        return donation
+
+        # Convert DTO to Pydantic schema
+        return DonationMessageSchema(**dataclasses.asdict(donation))
 
     except HTTPException:
         raise

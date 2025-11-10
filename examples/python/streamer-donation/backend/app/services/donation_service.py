@@ -7,10 +7,9 @@ This service encapsulates donation processing, validation, and statistics.
 import logging
 import time
 import uuid
-from typing import Optional
 
 from app.core.database import DonationDB
-from app.models.dtos import DonationMessage, Streamer
+from app.models.dtos import DonationMessage
 from app.models.schemas import DonationMessageCreateSchema, DonationResponseSchema
 from app.services.streamer_service import StreamerService
 from app.services.validation_service import ValidationService
@@ -26,7 +25,7 @@ class DonationService:
         db: DonationDB,
         validation_service: ValidationService,
         streamer_service: StreamerService,
-    ):
+    ) -> None:
         """
         Initialize donation service with dependencies.
 
@@ -75,9 +74,7 @@ class DonationService:
             raise ValueError(error_msg)
 
         # Step 2: Validate wallet addresses
-        if not self.validation_service.validate_wallet_address(
-            donation_data.donor_address
-        ):
+        if not self.validation_service.validate_wallet_address(donation_data.donor_address):
             raise ValueError(f"Invalid donor address: {donation_data.donor_address}")
 
         if not self.validation_service.validate_wallet_address(streamer.wallet_address):
@@ -92,13 +89,9 @@ class DonationService:
             raise ValueError(amount_error)
 
         # Step 4: Find matching tier
-        matching_tier = self.streamer_service.find_matching_tier(
-            streamer, donation_data.amount_usd
-        )
+        matching_tier = self.streamer_service.find_matching_tier(streamer, donation_data.amount_usd)
         if matching_tier is None:
-            available_amounts = self.streamer_service.get_available_tier_amounts(
-                streamer
-            )
+            available_amounts = self.streamer_service.get_available_tier_amounts(streamer)
             raise ValueError(
                 f"Invalid donation amount: ${donation_data.amount_usd}. "
                 f"Must match one of: {available_amounts}"
@@ -137,7 +130,7 @@ class DonationService:
             duration_ms=matching_tier.duration_ms,
         )
 
-    def get_donation_by_id(self, donation_id: str) -> Optional[DonationMessage]:
+    def get_donation_by_id(self, donation_id: str) -> DonationMessage | None:
         """
         Retrieve donation by unique ID.
 

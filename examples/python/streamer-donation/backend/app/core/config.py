@@ -5,8 +5,6 @@ This module loads environment variables and provides typed configuration
 for the FastAPI application.
 """
 
-from typing import List
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -53,7 +51,7 @@ class Settings(BaseSettings):
     )
 
     @property
-    def allowed_origins_list(self) -> List[str]:
+    def allowed_origins_list(self) -> list[str]:
         """Parse comma-separated origins into a list."""
         return [origin.strip() for origin in self.allowed_origins.split(",")]
 
@@ -71,9 +69,7 @@ class Settings(BaseSettings):
 
     def validate_cdp_credentials(self) -> bool:
         """Check if CDP credentials are configured."""
-        return bool(
-            self.cdp_api_key_id and self.cdp_api_key_secret and self.cdp_wallet_secret
-        )
+        return bool(self.cdp_api_key_id and self.cdp_api_key_secret and self.cdp_wallet_secret)
 
 
 # Global settings instance

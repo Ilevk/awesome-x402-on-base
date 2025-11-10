@@ -5,7 +5,6 @@ Provides abstraction layer over database operations for donations.
 """
 
 import logging
-from typing import Optional
 
 from app.core.database import DonationDB
 from app.models.dtos import DonationMessage
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 class DonationRepository:
     """Repository for managing donation data access."""
 
-    def __init__(self, db: DonationDB):
+    def __init__(self, db: DonationDB) -> None:
         """
         Initialize repository with database instance.
 
@@ -25,7 +24,7 @@ class DonationRepository:
         """
         self.db = db
 
-    def get_by_id(self, donation_id: str) -> Optional[DonationMessage]:
+    def get_by_id(self, donation_id: str) -> DonationMessage | None:
         """
         Retrieve donation by unique ID.
 
@@ -37,9 +36,7 @@ class DonationRepository:
         """
         return self.db.get_donation(donation_id)
 
-    def list_by_streamer(
-        self, streamer_id: str, limit: int = 100
-    ) -> list[DonationMessage]:
+    def list_by_streamer(self, streamer_id: str, limit: int = 100) -> list[DonationMessage]:
         """
         List donations for a specific streamer.
 

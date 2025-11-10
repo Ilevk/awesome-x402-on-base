@@ -6,6 +6,7 @@ and demonstration purposes. In Phase 2, this will be replaced with
 a proper registration system.
 """
 
+from app.core.database import DonationDB
 from app.models.dtos import DonationTier, Platform, Streamer
 
 # Mock Streamer 1: Logan
@@ -37,7 +38,10 @@ LOGAN = Streamer(
             duration_ms=10000,
         ),
     ],
-    thank_you_message="Thanks for supporting my stream! Your donation helps me create better content. See you in the next stream! 🎮",
+    thank_you_message=(
+        "Thanks for supporting my stream! Your donation helps me create better content. "
+        "See you in the next stream! 🎮"
+    ),
 )
 
 # Mock Streamer 2: Kim
@@ -91,7 +95,10 @@ ALEX = Streamer(
             duration_ms=8000,
         ),
     ],
-    thank_you_message="Thank you so much for the donation! It really means a lot. Let's keep building together! 🚀",
+    thank_you_message=(
+        "Thank you so much for the donation! It really means a lot. "
+        "Let's keep building together! 🚀"
+    ),
 )
 
 # Dictionary for easy lookup
@@ -134,7 +141,7 @@ def get_mock_streamer_by_name(name: str) -> Streamer | None:
     return MOCK_STREAMERS.get(name.lower())
 
 
-def init_mock_data_in_db(db) -> None:
+def init_mock_data_in_db(db: DonationDB) -> None:
     """
     Initialize database with mock streamer data.
 
@@ -144,8 +151,6 @@ def init_mock_data_in_db(db) -> None:
     Args:
         db: DonationDB instance
     """
-    from app.core.database import DonationDB
-
     if not isinstance(db, DonationDB):
         raise TypeError("db must be a DonationDB instance")
 

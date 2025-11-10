@@ -15,6 +15,7 @@ License: MIT
 """
 
 import logging
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -35,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     Application lifespan manager.
 
@@ -95,7 +96,7 @@ app.add_middleware(
 
 # Health check endpoint
 @app.get("/health", tags=["system"])
-async def health_check():
+async def health_check() -> JSONResponse:
     """
     Health check endpoint.
 
@@ -105,7 +106,7 @@ async def health_check():
 
     try:
         # Check database connection
-        db = get_db()
+        get_db()
         db_status = "connected"
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
@@ -129,7 +130,7 @@ app.include_router(donations.router)
 
 # Root endpoint
 @app.get("/", tags=["system"])
-async def root():
+async def root() -> dict[str, str]:
     """
     Root endpoint with API information.
     """

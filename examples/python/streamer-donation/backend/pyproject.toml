@@ -14,7 +14,7 @@ dependencies = [
     "uvicorn[standard]>=0.34.0",
     "x402>=0.1.0",
     "web3>=6.0.0",
-    "python-rocksdb>=0.7.0",
+    "rocksdict>=0.3.0",  # Python 3.12 compatible RocksDB binding
     "pydantic>=2.10.0",
     "pydantic-settings>=2.0.0",
     "python-dotenv>=1.0.0",
@@ -31,12 +31,7 @@ dev = [
     "black>=24.0.0",
     "ruff>=0.8.0",
     "basedpyright>=1.18.0",
-    "pre-commit>=3.5.0",
 ]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
 
 [tool.black]
 line-length = 100
@@ -61,9 +56,13 @@ select = [
     "RUF", # Ruff-specific rules
 ]
 ignore = [
-    "ANN101", # Missing type annotation for self
-    "ANN102", # Missing type annotation for cls
-    "S101",   # Use of assert
+    "S101",    # Use of assert in tests
+    "S104",    # Possible binding to all interfaces (0.0.0.0 for dev server)
+    "S106",    # Possible hardcoded password (test fixtures)
+    "B008",    # Do not perform function call in argument defaults (FastAPI Depends)
+    "B017",    # Do not assert blind exception: Exception
+    "B904",    # Within except clause, raise with from (FastAPI pattern)
+    "RUF012",  # Mutable class attributes (Pydantic Config pattern)
 ]
 
 [tool.ruff.format]
@@ -84,8 +83,10 @@ reportUnknownMemberType = false
 reportUnknownArgumentType = false
 reportUnknownVariableType = false
 reportMissingParameterType = "error"
-reportMissingReturnType = "error"
 reportUnnecessaryTypeIgnoreComment = "warning"
+reportImplicitRelativeImport = false
+reportUnusedCallResult = false
+reportAny = false
 
 [tool.mypy]
 python_version = "3.10"

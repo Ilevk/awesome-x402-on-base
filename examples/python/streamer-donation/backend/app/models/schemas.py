@@ -4,8 +4,6 @@ API Request and Response schemas.
 These Pydantic models are used for HTTP request validation and response serialization.
 """
 
-from typing import List, Optional
-
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from app.models.dtos import Platform as PlatformEnum
@@ -61,18 +59,18 @@ class StreamerBaseSchema(BaseModel):
         description="Ethereum wallet address",
         json_schema_extra={"example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"},
     )
-    platforms: List[PlatformEnum] = Field(
+    platforms: list[PlatformEnum] = Field(
         ...,
         min_length=1,
         description="Streaming platforms",
         json_schema_extra={"example": ["youtube", "twitch"]},
     )
-    avatar_url: Optional[HttpUrl] = Field(
+    avatar_url: HttpUrl | None = Field(
         None,
         description="Profile image URL",
         json_schema_extra={"example": "https://example.com/avatars/logan.png"},
     )
-    donation_tiers: List[DonationTierSchema] = Field(
+    donation_tiers: list[DonationTierSchema] = Field(
         ...,
         min_length=1,
         max_length=10,
@@ -145,13 +143,13 @@ class DonationMessageCreateSchema(BaseModel):
         description="Donor's wallet address",
         json_schema_extra={"example": "0x1234567890abcdef1234567890abcdef12345678"},
     )
-    message: Optional[str] = Field(
+    message: str | None = Field(
         None,
         max_length=200,
         description="Custom message from donor",
         json_schema_extra={"example": "Great stream! Keep it up! 🔥"},
     )
-    clip_url: Optional[HttpUrl] = Field(
+    clip_url: HttpUrl | None = Field(
         None,
         description="Clip URL (Phase 2)",
         json_schema_extra={"example": None},
@@ -167,7 +165,7 @@ class DonationMessageCreateSchema(BaseModel):
 
     @field_validator("message")
     @classmethod
-    def sanitize_message(cls, v: Optional[str]) -> Optional[str]:
+    def sanitize_message(cls, v: str | None) -> str | None:
         """Remove leading/trailing whitespace from message."""
         if v is not None:
             return v.strip() if v.strip() else None

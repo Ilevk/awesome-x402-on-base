@@ -7,9 +7,9 @@ for persisting streamer and donation data.
 
 import json
 import logging
-from typing import List, Optional
+from typing import Any
 
-import rocksdb
+from rocksdict import Options, Rdict
 
 from app.models.dtos import DonationMessage, DonationTier, Platform, Streamer
 
@@ -24,7 +24,7 @@ class DonationDB:
     and donation messages using RocksDB as the underlying storage engine.
     """
 
-    def __init__(self, db_path: str = "./data/donations.db"):
+    def __init__(self, db_path: str = "./data/donations.db") -> None:
         """
         Initialize RocksDB connection.
 
@@ -37,16 +37,15 @@ class DonationDB:
         self.db_path = db_path
 
         # Configure RocksDB options for optimal performance
-        opts = rocksdb.Options()
-        opts.create_if_missing = True
-        opts.max_open_files = 300000
-        opts.write_buffer_size = 67108864  # 64MB
-        opts.max_write_buffer_number = 3
-        opts.target_file_size_base = 67108864  # 64MB
-        opts.compression = rocksdb.CompressionType.lz4_compression
+        opts = Options()
+        opts.create_if_missing(True)
+        opts.set_max_open_files(300000)
+        opts.set_write_buffer_size(67108864)  # 64MB
+        opts.set_max_write_buffer_number(3)
+        opts.set_target_file_size_base(67108864)  # 64MB
 
         try:
-            self.db = rocksdb.DB(db_path, opts)
+            self.db: Rdict = Rdict(db_path, options=opts)
             logger.info(f"RocksDB initialized at {db_path}")
         except Exception as e:
             logger.error(f"Failed to initialize RocksDB: {e}")
@@ -55,7 +54,7 @@ class DonationDB:
     def close(self) -> None:
         """Close the database connection."""
         if hasattr(self, "db"):
-            del self.db
+            self.db.close()
             logger.info("RocksDB connection closed")
 
     # ==================== Streamer Operations ====================
@@ -70,7 +69,7 @@ class DonationDB:
         Raises:
             Exception: If database write fails
         """
-        key = f"streamers:{streamer.id}".encode("utf-8")
+        key = f"streamers:{streamer.id}".encode()
 
         # Convert dataclass to dict for JSON serialization
         data = {
@@ -92,13 +91,13 @@ class DonationDB:
         value = json.dumps(data).encode("utf-8")
 
         try:
-            self.db.put(key, value)
+            self.db[key] = value
             logger.debug(f"Stored streamer: {streamer.id}")
         except Exception as e:
             logger.error(f"Failed to store streamer {streamer.id}: {e}")
             raise
 
-    def get_streamer(self, streamer_id: str) -> Optional[Streamer]:
+    def get_streamer(self, streamer_id: str) -> Streamer | None:
         """
         Retrieve a streamer by ID.
 
@@ -111,12 +110,12 @@ class DonationDB:
         Raises:
             Exception: If database read fails or data is corrupted
         """
-        key = f"streamers:{streamer_id}".encode("utf-8")
+        key = f"streamers:{streamer_id}".encode()
 
         try:
             value = self.db.get(key)
-            if value:
-                data = json.loads(value.decode("utf-8"))
+            if value is not None:
+                data: dict[str, Any] = json.loads(value.decode("utf-8"))
                 # Convert dict to Streamer DTO
                 return Streamer(
                     id=data["id"],
@@ -124,9 +123,7 @@ class DonationDB:
                     wallet_address=data["wallet_address"],
                     platforms=[Platform(p) for p in data["platforms"]],
                     avatar_url=data.get("avatar_url"),
-                    donation_tiers=[
-                        DonationTier(**tier) for tier in data["donation_tiers"]
-                    ],
+                    donation_tiers=[DonationTier(**tier) for tier in data["donation_tiers"]],
                     thank_you_message=data["thank_you_message"],
                 )
             return None
@@ -137,7 +134,7 @@ class DonationDB:
             logger.error(f"Failed to get streamer {streamer_id}: {e}")
             raise
 
-    def get_streamer_by_wallet(self, wallet_address: str) -> Optional[Streamer]:
+    def get_streamer_by_wallet(self, wallet_address: str) -> Streamer | None:
         """
         Retrieve a streamer by wallet address.
 
@@ -152,16 +149,18 @@ class DonationDB:
         wallet_lower = wallet_address.lower()
 
         # Scan all streamers (inefficient, but acceptable for Phase 1)
-        it = self.db.iteritems()
-        it.seek(b"streamers:")
+        it = self.db.items()
 
         for key, value in it:
-            key_str = key.decode("utf-8")
+            # Type cast to bytes for decode operation
+            key_bytes: bytes = key if isinstance(key, bytes) else key.encode("utf-8")  # type: ignore[union-attr]
+            value_bytes: bytes = value if isinstance(value, bytes) else value.encode("utf-8")
+            key_str = key_bytes.decode("utf-8")
             if not key_str.startswith("streamers:"):
                 break
 
             try:
-                data = json.loads(value.decode("utf-8"))
+                data = json.loads(value_bytes.decode("utf-8"))
                 if data.get("wallet_address", "").lower() == wallet_lower:
                     return Streamer(
                         id=data["id"],
@@ -169,9 +168,7 @@ class DonationDB:
                         wallet_address=data["wallet_address"],
                         platforms=[Platform(p) for p in data["platforms"]],
                         avatar_url=data.get("avatar_url"),
-                        donation_tiers=[
-                            DonationTier(**tier) for tier in data["donation_tiers"]
-                        ],
+                        donation_tiers=[DonationTier(**tier) for tier in data["donation_tiers"]],
                         thank_you_message=data["thank_you_message"],
                     )
             except Exception as e:
@@ -180,7 +177,7 @@ class DonationDB:
 
         return None
 
-    def list_streamers(self, limit: int = 100) -> List[Streamer]:
+    def list_streamers(self, limit: int = 100) -> list[Streamer]:
         """
         List all streamers.
 
@@ -190,12 +187,13 @@ class DonationDB:
         Returns:
             List of Streamer models
         """
-        streamers = []
-        it = self.db.iteritems()
-        it.seek(b"streamers:")
+        streamers: list[Streamer] = []
 
-        for key, value in it:
-            key_str = key.decode("utf-8")
+        for key, value in self.db.items(from_key=b"streamers:"):
+            # Type cast to bytes for decode operation
+            key_bytes: bytes = key if isinstance(key, bytes) else key.encode("utf-8")  # type: ignore[union-attr]
+            value_bytes: bytes = value if isinstance(value, bytes) else value.encode("utf-8")
+            key_str: str = key_bytes.decode("utf-8")
             if not key_str.startswith("streamers:"):
                 break
 
@@ -203,7 +201,7 @@ class DonationDB:
                 break
 
             try:
-                data = json.loads(value.decode("utf-8"))
+                data: dict[str, Any] = json.loads(value_bytes.decode("utf-8"))
                 streamers.append(
                     Streamer(
                         id=data["id"],
@@ -211,9 +209,7 @@ class DonationDB:
                         wallet_address=data["wallet_address"],
                         platforms=[Platform(p) for p in data["platforms"]],
                         avatar_url=data.get("avatar_url"),
-                        donation_tiers=[
-                            DonationTier(**tier) for tier in data["donation_tiers"]
-                        ],
+                        donation_tiers=[DonationTier(**tier) for tier in data["donation_tiers"]],
                         thank_you_message=data["thank_you_message"],
                     )
                 )
@@ -233,7 +229,7 @@ class DonationDB:
         Returns:
             True if deleted, False if not found
         """
-        key = f"streamers:{streamer_id}".encode("utf-8")
+        key = f"streamers:{streamer_id}".encode()
 
         try:
             if self.db.get(key):
@@ -257,7 +253,7 @@ class DonationDB:
         Raises:
             Exception: If database write fails
         """
-        key = f"donations:{donation.donation_id}".encode("utf-8")
+        key = f"donations:{donation.donation_id}".encode()
 
         # Convert dataclass to dict for JSON serialization
         data = {
@@ -273,13 +269,13 @@ class DonationDB:
         value = json.dumps(data).encode("utf-8")
 
         try:
-            self.db.put(key, value)
+            self.db[key] = value
             logger.debug(f"Stored donation: {donation.donation_id}")
         except Exception as e:
             logger.error(f"Failed to store donation {donation.donation_id}: {e}")
             raise
 
-    def get_donation(self, donation_id: str) -> Optional[DonationMessage]:
+    def get_donation(self, donation_id: str) -> DonationMessage | None:
         """
         Retrieve a donation by ID.
 
@@ -289,7 +285,7 @@ class DonationDB:
         Returns:
             DonationMessage DTO if found, None otherwise
         """
-        key = f"donations:{donation_id}".encode("utf-8")
+        key = f"donations:{donation_id}".encode()
 
         try:
             value = self.db.get(key)
@@ -315,7 +311,7 @@ class DonationDB:
 
     def list_donations_by_streamer(
         self, streamer_id: str, limit: int = 100
-    ) -> List[DonationMessage]:
+    ) -> list[DonationMessage]:
         """
         List all donations for a specific streamer.
 
@@ -329,11 +325,12 @@ class DonationDB:
             List of DonationMessage models
         """
         donations = []
-        it = self.db.iteritems()
-        it.seek(b"donations:")
 
-        for key, value in it:
-            key_str = key.decode("utf-8")
+        for key, value in self.db.items(from_key=b"donations:"):
+            # Type cast to bytes for decode operation
+            key_bytes: bytes = key if isinstance(key, bytes) else key.encode("utf-8")  # type: ignore[union-attr]
+            value_bytes: bytes = value if isinstance(value, bytes) else value.encode("utf-8")
+            key_str = key_bytes.decode("utf-8")
             if not key_str.startswith("donations:"):
                 break
 
@@ -341,7 +338,7 @@ class DonationDB:
                 break
 
             try:
-                data = json.loads(value.decode("utf-8"))
+                data = json.loads(value_bytes.decode("utf-8"))
                 if data.get("streamer_id") == streamer_id:
                     donations.append(
                         DonationMessage(
@@ -363,7 +360,7 @@ class DonationDB:
         donations.sort(key=lambda d: d.timestamp, reverse=True)
         return donations
 
-    def get_donation_stats(self, streamer_id: str) -> dict:
+    def get_donation_stats(self, streamer_id: str) -> dict[str, float]:
         """
         Get donation statistics for a streamer.
 
@@ -377,7 +374,7 @@ class DonationDB:
 
         total_amount = sum(d.amount_usd for d in donations)
         donation_count = len(donations)
-        unique_donors = len(set(d.donor_address.lower() for d in donations))
+        unique_donors = len({d.donor_address.lower() for d in donations})
 
         return {
             "total_amount_usd": total_amount,
@@ -387,7 +384,7 @@ class DonationDB:
 
 
 # Global database instance (initialized in main.py)
-db: Optional[DonationDB] = None
+db: DonationDB | None = None
 
 
 def get_db() -> DonationDB:
