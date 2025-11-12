@@ -2,13 +2,14 @@
 Streamer service for business logic related to streamer operations.
 
 This service encapsulates all streamer-related business logic including
-retrieval, validation, and tier matching.
+retrieval, validation, tier matching, and creation.
 """
 
 import logging
+import uuid
 
 from app.core.database import DonationDB
-from app.models.dtos import DonationTier, Streamer
+from app.models.dtos import DonationTier, Platform, Streamer
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,89 @@ class StreamerService:
             db: DonationDB instance for data access
         """
         self.db = db
+
+    def create_streamer(
+        self,
+        name: str,
+        wallet_address: str,
+        platforms: list[Platform],
+        donation_tiers: list[dict[str, float | str | int]],
+        avatar_url: str | None = None,
+        thank_you_message: str = "Thank you for your support!",
+    ) -> Streamer:
+        """
+        Create a new streamer with donation tiers.
+
+        Args:
+            name: Streamer display name
+            wallet_address: Ethereum wallet address (must be unique)
+            platforms: List of streaming platforms
+            donation_tiers: List of tier configs (amount_usd, popup_message, duration_ms)
+            avatar_url: Optional profile image URL
+            thank_you_message: Custom thank you message
+
+        Returns:
+            Created Streamer model with generated UUID
+
+        Raises:
+            ValueError: If validation fails (duplicate wallet, invalid tiers, etc.)
+
+        Example:
+            >>> streamer = service.create_streamer(
+            ...     name="Logan",
+            ...     wallet_address="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
+            ...     platforms=[Platform.YOUTUBE, Platform.TWITCH],
+            ...     donation_tiers=[
+            ...         {"amount_usd": 1.0, "popup_message": "Thank you! 💙", "duration_ms": 3000},
+            ...         {"amount_usd": 5.0, "popup_message": "Amazing! 🎉", "duration_ms": 5000},
+            ...     ]
+            ... )
+        """
+        # Generate UUID for new streamer
+        streamer_id = str(uuid.uuid4())
+
+        # Validate wallet address uniqueness (already checked in route, but double-check)
+        if self.db.get_streamer_by_wallet(wallet_address):
+            raise ValueError(f"Wallet address {wallet_address} is already registered")
+
+        # Convert donation tier dicts to DonationTier objects
+        tier_objects = [
+            DonationTier(
+                amount_usd=float(tier["amount_usd"]),
+                popup_message=str(tier["popup_message"]),
+                duration_ms=int(tier.get("duration_ms", 3000)),
+            )
+            for tier in donation_tiers
+        ]
+
+        # Validate tier amounts are unique
+        amounts = [tier.amount_usd for tier in tier_objects]
+        if len(amounts) != len(set(amounts)):
+            raise ValueError("Donation tier amounts must be unique")
+
+        # Validate tier amounts are sorted ascending
+        if amounts != sorted(amounts):
+            raise ValueError("Donation tiers must be sorted by amount in ascending order")
+
+        # Create Streamer DTO
+        streamer = Streamer(
+            id=streamer_id,
+            name=name,
+            wallet_address=wallet_address,
+            platforms=platforms,
+            avatar_url=avatar_url,
+            donation_tiers=tier_objects,
+            thank_you_message=thank_you_message,
+        )
+
+        # Save to database
+        self.db.put_streamer(streamer)
+
+        logger.info(
+            f"Created streamer: {name} ({streamer_id}) with {len(tier_objects)} tiers"
+        )
+
+        return streamer
 
     def get_streamer_by_id(self, streamer_id: str) -> Streamer | None:
         """

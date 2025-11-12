@@ -84,6 +84,17 @@ class StreamerBaseSchema(BaseModel):
     )
 
 
+class StreamerCreateSchema(StreamerBaseSchema):
+    """
+    Request schema for creating a new streamer.
+
+    This is sent to POST /api/streamer endpoint.
+    Does not include 'id' field as it will be generated server-side.
+    """
+
+    pass
+
+
 class StreamerSchema(StreamerBaseSchema):
     """
     Complete streamer schema for API responses.

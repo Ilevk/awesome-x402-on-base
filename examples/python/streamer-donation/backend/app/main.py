@@ -21,11 +21,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from x402.fastapi.middleware import require_payment
 
 from app.core.config import Settings
 from app.core.dependencies import close_db, get_db, get_settings, init_db
 from app.mock_data import init_mock_data_in_db
-from app.routes import donations, streamers
+from app.routes import donations, pages, streamers
 
 # Configure logging
 logging.basicConfig(
@@ -93,6 +94,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Configure x402 payment middleware for donation page
+# This protects the /donate/{streamer_id} route
+if settings.server_wallet_address:
+    app.middleware("http")(
+        require_payment(
+            path="/donate/*",
+            price=settings.x402_donation_page_price,
+            pay_to_address=settings.server_wallet_address,
+            network=settings.network,
+        )
+    )
+    logger.info(
+        f"x402 middleware enabled for /donate/* (price: {settings.x402_donation_page_price})"
+    )
+else:
+    logger.warning(
+        "x402 middleware disabled: SERVER_WALLET_ADDRESS not configured. "
+        "Donation page will be accessible without payment."
+    )
+
 
 # Health check endpoint
 @app.get("/health", tags=["system"])
@@ -126,6 +147,7 @@ async def health_check() -> JSONResponse:
 # Include API routers
 app.include_router(streamers.router)
 app.include_router(donations.router)
+app.include_router(pages.router)  # x402-protected HTML pages
 
 
 # Root endpoint

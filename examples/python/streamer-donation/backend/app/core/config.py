@@ -39,6 +39,8 @@ class Settings(BaseSettings):
 
     # x402 Configuration
     x402_timeout_seconds: int = 120
+    x402_donation_page_price: str = "$0.001"  # Price to access donation page
+    server_wallet_address: str = ""  # Server wallet address for receiving payments
 
     # Logging
     log_level: str = "INFO"
