@@ -68,9 +68,7 @@ class TestDonationRoutes:
         }
 
         with patch("time.time", return_value=1699999999):
-            response = client.post(
-                f"/api/donate/{sample_streamer.id}/message", json=donation_data
-            )
+            response = client.post(f"/api/donate/{sample_streamer.id}/message", json=donation_data)
 
         assert response.status_code == 201
         data = response.json()
@@ -88,9 +86,7 @@ class TestDonationRoutes:
             "clip_url": None,
         }
 
-        response = client.post(
-            "/api/donate/nonexistent-id/message", json=donation_data
-        )
+        response = client.post("/api/donate/nonexistent-id/message", json=donation_data)
 
         assert response.status_code == 400
         assert "not found" in response.json()["detail"].lower()
@@ -109,9 +105,7 @@ class TestDonationRoutes:
             "clip_url": None,
         }
 
-        response = client.post(
-            f"/api/donate/{sample_streamer.id}/message", json=donation_data
-        )
+        response = client.post(f"/api/donate/{sample_streamer.id}/message", json=donation_data)
 
         # Service validation catches it before Pydantic
         assert response.status_code == 400
@@ -130,9 +124,7 @@ class TestDonationRoutes:
             "clip_url": None,
         }
 
-        response = client.post(
-            f"/api/donate/{sample_streamer.id}/message", json=donation_data
-        )
+        response = client.post(f"/api/donate/{sample_streamer.id}/message", json=donation_data)
 
         assert response.status_code == 422  # Pydantic validation error
 
@@ -150,9 +142,7 @@ class TestDonationRoutes:
             "clip_url": None,
         }
 
-        response = client.post(
-            f"/api/donate/{sample_streamer.id}/message", json=donation_data
-        )
+        response = client.post(f"/api/donate/{sample_streamer.id}/message", json=donation_data)
 
         assert response.status_code == 400
         assert "invalid donation amount" in response.json()["detail"].lower()
@@ -230,9 +220,7 @@ class TestDonationRoutes:
             )
             db.put_donation(donation)
 
-        response = client.get(
-            f"/api/donations/streamer/{sample_streamer.id}?limit=3"
-        )
+        response = client.get(f"/api/donations/streamer/{sample_streamer.id}?limit=3")
 
         assert response.status_code == 200
         data = response.json()
@@ -270,9 +258,7 @@ class TestDonationRoutes:
         assert stats["donation_count"] == 4
         assert stats["unique_donors"] == 2
 
-    def test_get_donation_stats_streamer_not_found(
-        self, client: TestClient
-    ) -> None:
+    def test_get_donation_stats_streamer_not_found(self, client: TestClient) -> None:
         """Test getting stats for non-existent streamer."""
         response = client.get("/api/donations/streamer/nonexistent-id/stats")
 
@@ -346,9 +332,7 @@ class TestStreamerRoutes:
         """Test retrieving streamer by wallet address."""
         db.put_streamer(sample_streamer)
 
-        response = client.get(
-            f"/api/streamer/by-wallet/{sample_streamer.wallet_address}"
-        )
+        response = client.get(f"/api/streamer/by-wallet/{sample_streamer.wallet_address}")
 
         assert response.status_code == 200
         data = response.json()
@@ -357,9 +341,7 @@ class TestStreamerRoutes:
 
     def test_get_streamer_by_wallet_not_found(self, client: TestClient) -> None:
         """Test retrieving streamer by non-existent wallet."""
-        response = client.get(
-            "/api/streamer/by-wallet/0x0000000000000000000000000000000000000000"
-        )
+        response = client.get("/api/streamer/by-wallet/0x0000000000000000000000000000000000000000")
 
         assert response.status_code == 404
         detail = response.json()["detail"].lower()
@@ -389,7 +371,7 @@ class TestRouteEdgeCases:
 
         response = client.post(
             f"/api/donate/{sample_streamer.id}/message",
-            data="invalid json",
+            data={"invalid json": "invalid json"},
             headers={"Content-Type": "application/json"},
         )
 
@@ -407,8 +389,6 @@ class TestRouteEdgeCases:
             "message": "Test",
         }
 
-        response = client.post(
-            f"/api/donate/{sample_streamer.id}/message", json=incomplete_data
-        )
+        response = client.post(f"/api/donate/{sample_streamer.id}/message", json=incomplete_data)
 
         assert response.status_code == 422
